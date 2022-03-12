@@ -29,7 +29,7 @@
             </li>
             {% else %}
             <li>
-                <form class="form-inline" action="login/" method="post">
+                <form class="form-inline" action="login" method="post">
                     {% csrf_token %}
                     <input type="text" class="form-control" placeholder="Username" name="username" >
                     <input type="password" class="form-control" placeholder="Password" name="psw" >
@@ -41,7 +41,7 @@
         </ul>    
     </nav>
     <!--Add a dealer table here -->
-
+    You have logined.
     </body>
 
 </html>
