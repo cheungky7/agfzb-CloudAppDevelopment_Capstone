@@ -49,11 +49,13 @@ def login_request(request):
             # If user is valid, call login method to login current user
             login(request, user)
             #return redirect('djangoapp/logined.html')
-            return render(request, 'djangoapp/logined.html', context)
+            #return render(request, 'djangoapp/logined.html', context)
+            return redirect('djangoapp:index')
         else:
             # If not, return to login page again
             
-            return redirect('djangoapp/index.html')
+            #return redirect('djangoapp/index.html')
+            return redirect('djangoapp:index')
     
 
 # Create a `logout_request` view to handle sign out request
@@ -61,7 +63,8 @@ def login_request(request):
 # ...
 def logout_request(request):
     logout(request)
-    return render(request, 'djangoapp/logouted.html')
+    #return render(request, 'djangoapp/logouted.html')
+    return redirect('djangoapp:index')
 
 # Create a `registration_request` view to handle sign up request
 # def registration_request(request):
