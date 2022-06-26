@@ -20,6 +20,7 @@ def get_request(url, **kwargs):
         print("Network exception occurred")
     status_code = response.status_code
     print("With status {} ".format(status_code))
+    print(response.text)
     json_data = json.loads(response.text)
     return json_data
 
@@ -36,9 +37,11 @@ def get_dealers_from_cf(url, **kwargs):
     results = []
     # Call get_request with a URL parameter
     json_result = get_request(url)
+    #print(json_result)
     if json_result:
         # Get the row list in JSON as dealers
-        dealers = json_result["rows"]
+        dealers = json_result["body"]["rows"]
+        #print(dealers)
         # For each dealer object
         for dealer in dealers:
             # Get its content in `doc` object
