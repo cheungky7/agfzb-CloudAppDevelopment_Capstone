@@ -1,12 +1,12 @@
 import requests
 import json
 # import related models here
-from .models import CarDealer
+from .models import CarDealer,DealerReview
 from requests.auth import HTTPBasicAuth
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 \
-    import Features, CategoriesOptions
+    import Features, CategoriesOptions,SentimentOptions
 
 
 
@@ -83,23 +83,37 @@ def get_dealer_by_id_from_cf(url, dealerId):
     results = []
     # Call get_request with a URL parameter
     #url=url+'?dealerId='+dealerId
-    param={{"id":id}}
+    param={"id":id}
     json_result = get_request(url,param)
     #print(json_result)
     if json_result:
         # Get the row list in JSON as dealers
-        dealers = json_result["body"]["rows"]
+        reviewslist = json_result["body"]["docs"]
         #print(dealers)
         # For each dealer object
-        for dealer in dealers:
+        for reviewdoc in reviewslist:
             # Get its content in `doc` object
-            dealer_doc = dealer["doc"]
+            reviewtxt = reviewdoc["review"]
+            sentimenttxt =analyze_review_sentiments(reviewtxt)
+            temp ={
+                    "purchase_date":reviewdoc["purchase_date"],
+                    "car_make":reviewdoc["car_make"],
+                    "car_model":reviewdoc["car_model"],
+                    "car_year":reviewdoc["car_year"]}
             # Create a CarDealer object with values in `doc` object
-            dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
-                                   id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
-                                   short_name=dealer_doc["short_name"],
-                                   st=dealer_doc["st"], zip=dealer_doc["zip"])
-            results.append(dealer_obj)
+            if reviewdoc["purchase"]:
+                review_obj = DealerReview(dealership=reviewdoc["dealership"],name=reviewdoc["name"],purchase=reviewdoc["purchase"],
+                                      id=reviewdoc["id"],review=reviewdoc["review"], sentiment = sentiment1,
+                                      temp
+                                      )
+                results.append(review_obj)
+            
+            else:
+                reviewObj = DealerReview(dealership=reviewdoc["dealership"],name=reviewdoc["name"],purchase=reviewdoc["purchase"],
+                                      id=reviewdoc["id"],review=reviewdoc["review"],sentiment = sentimenttxt)
+
+
+            results.append(reviewObj)
 
     return results
 
