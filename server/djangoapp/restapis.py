@@ -83,7 +83,7 @@ def get_dealer_by_id_from_cf(url, dealerId):
     results = []
     # Call get_request with a URL parameter
     #url=url+'?dealerId='+dealerId
-    param={"id":id}
+    param={"dealerId":dealerId}
     json_result = get_request(url,param)
     #print(json_result)
     if json_result:
@@ -95,24 +95,10 @@ def get_dealer_by_id_from_cf(url, dealerId):
             # Get its content in `doc` object
             reviewtxt = reviewdoc["review"]
             sentimenttxt =analyze_review_sentiments(reviewtxt)
-            temp ={
-                    "purchase_date":reviewdoc["purchase_date"],
-                    "car_make":reviewdoc["car_make"],
-                    "car_model":reviewdoc["car_model"],
-                    "car_year":reviewdoc["car_year"]}
             # Create a CarDealer object with values in `doc` object
-            if reviewdoc["purchase"]:
-                review_obj = DealerReview(dealership=reviewdoc["dealership"],name=reviewdoc["name"],purchase=reviewdoc["purchase"],
-                                      id=reviewdoc["id"],review=reviewdoc["review"], sentiment = sentiment1,
-                                      temp
-                                      )
-                results.append(review_obj)
-            
-            else:
-                reviewObj = DealerReview(dealership=reviewdoc["dealership"],name=reviewdoc["name"],purchase=reviewdoc["purchase"],
-                                      id=reviewdoc["id"],review=reviewdoc["review"],sentiment = sentimenttxt)
-
-
+            reviewObj=DealerReview(dealership=reviewdoc["dealership"], name=reviewdoc["name"], purchase=reviewdoc["purchase"],
+             review=reviewdoc["review"], purchase_date=reviewdoc["purchase_date"], car_make=reviewdoc["car_make"], 
+         car_model=reviewdoc["car_model"], car_year=reviewdoc["car_year"], sentiment=sentimenttxt,id=reviewdoc["id"])
             results.append(reviewObj)
 
     return results
